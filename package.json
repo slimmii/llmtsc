@@ -1,6 +1,6 @@
 {
   "name": "llmtsc",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A TypeScript compiler front-end that asks an LLM to fix type errors and typos in memory before transpiling. Your source files are never modified.",
   "license": "MIT",
   "main": "dist/index.js",
@@ -39,15 +39,12 @@
   "engines": {
     "node": ">=18.17"
   },
-  "peerDependencies": {
-    "typescript": ">=4.7"
-  },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.132.0"
+    "@anthropic-ai/sdk": "^0.132.0",
+    "typescript": ">=5.0.0 <7"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
-    "typescript": "^5.9.3",
     "vite": "^6.4.4"
   }
 }

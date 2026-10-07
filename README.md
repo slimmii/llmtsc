@@ -29,8 +29,10 @@ Answers are cached on disk, keyed by file content, diagnostics and model, so reb
 ## Install
 
 ```sh
-npm i -D llmtsc typescript
+npm i -D llmtsc
 ```
+
+llmtsc uses your project's own `typescript` (version 5 or 6) so its diagnostics match your editor. TypeScript 7, the native Go port, no longer ships the JavaScript compiler API. In projects on TypeScript 7, llmtsc falls back to its own bundled TypeScript 6.
 
 ## Configure the LLM (environment variables)
 
@@ -68,11 +70,15 @@ npx llmtsc --watch
 npx llmtsc check              # only show what would be repaired (diff), emit nothing
 npx llmtsc --show-fixes       # compile and print the diff of every repair
 npx llmtsc --no-llm           # plain tsc
+npx llmtsc file.ts            # compile single files, no tsconfig needed
+npx llmtsc run file.ts [args] # repair, compile and execute a script (like ts-node / tsx)
 ```
 
 Every `tsc` flag is accepted. The exit codes are the same as `tsc`: `0` means success, `2` means errors remain but output was emitted, `1` means nothing was emitted.
 
 ### 2. Any build tool: `llmtsc run -- <command>`
+
+Note the `--`. `llmtsc run file.ts`, without `--`, compiles and executes that one file instead.
 
 This wraps any Node-based tool. llmtsc repairs the project first and then starts the command with a small preload hook. When the tool reads a broken `.ts` file through Node's `fs`, the hook returns the repaired version instead.
 

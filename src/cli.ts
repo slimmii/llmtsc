@@ -82,10 +82,19 @@ async function compile(argv: string[], mode: { check: boolean }): Promise<number
     return 1;
   }
   if (cmd.options.version) {
-    process.stdout.write(`llmtsc 0.1.0 (TypeScript ${ts.version})\n`);
+    process.stdout.write(`llmtsc ${require("../package.json").version} (TypeScript ${ts.version})\n`);
     return 0;
   }
   const { project, watch, ...overrides } = cmd.options;
+  if (!project && !cmd.fileNames.length && !ts.findConfigFile(process.cwd(), ts.sys.fileExists)) {
+    process.stderr.write(
+      "llmtsc: no tsconfig.json found in this directory or its parents.\n" +
+        "  compile files directly:   llmtsc file.ts\n" +
+        "  compile and run a file:   llmtsc run file.ts\n" +
+        "  or create a tsconfig:     npx tsc --init\n",
+    );
+    return 1;
+  }
   const fixer = new LlmFixer(
     fixerOptions(flags, {
       tsconfig: project ? resolveProject(project as string) : undefined,
@@ -188,10 +197,15 @@ function watchProject(dir: string, fixer: LlmFixer, onChange: () => Promise<void
 
 async function runCommand(argv: string[]): Promise<number> {
   const sep = argv.indexOf("--");
+  if (sep === -1) {
+    // `llmtsc run [flags] file.ts [args...]`: repair, compile and execute a single entry file.
+    const fileIndex = argv.findIndex((a) => /\.(m|c)?tsx?$/.test(a));
+    if (fileIndex !== -1) return runFile(argv[fileIndex], argv.slice(fileIndex + 1), parseFlags(argv.slice(0, fileIndex)));
+  }
   const own = sep === -1 ? [] : argv.slice(0, sep);
   const command = sep === -1 ? argv : argv.slice(sep + 1);
   if (!command.length) {
-    process.stderr.write("usage: llmtsc run [--watch] [-p tsconfig.json] -- <command...>\n");
+    process.stderr.write("usage: llmtsc run file.ts [args...]\n       llmtsc run [--watch] [-p tsconfig.json] -- <command...>\n");
     return 1;
   }
   const flags = parseFlags(own);
@@ -266,4 +280,91 @@ async function runCommand(argv: string[]): Promise<number> {
       process.exit(code ?? 1); // stop the watcher
     });
   });
+}
+
+// -----------------------------------------------------------------------------------------------
+// llmtsc run file.ts
+// -----------------------------------------------------------------------------------------------
+
+async function runFile(file: string, scriptArgs: string[], flags: CliFlags): Promise<number> {
+  const cwd = process.cwd();
+  const entry = path.resolve(cwd, file);
+  if (!fs.existsSync(entry)) {
+    process.stderr.write(`llmtsc: ${file} does not exist\n`);
+    return 1;
+  }
+  const ts = loadTypeScript(cwd);
+  const configPath = ts.findConfigFile(path.dirname(entry), ts.sys.fileExists);
+  let options: import("typescript").CompilerOptions = {
+    target: ts.ScriptTarget.ES2022,
+    module: ts.ModuleKind.CommonJS,
+    esModuleInterop: true,
+    skipLibCheck: true,
+  };
+  let rootDir = path.dirname(entry);
+  if (configPath) {
+    const parsed = ts.getParsedCommandLineOfConfigFile(configPath, {}, { ...ts.sys, onUnRecoverableConfigFileDiagnostic: () => {} });
+    if (parsed) options = parsed.options;
+    rootDir = path.dirname(configPath);
+  }
+  if (path.relative(rootDir, entry).startsWith("..")) rootDir = path.dirname(entry);
+
+  // Bundler-style module settings can't run directly in Node; compile those to CommonJS.
+  const nodeModule = [ts.ModuleKind.Node16, ts.ModuleKind.NodeNext, (ts.ModuleKind as any).Node18].includes(options.module);
+  if (!nodeModule) {
+    options.module = ts.ModuleKind.CommonJS;
+    options.moduleResolution = ts.ModuleResolutionKind.Node10;
+    options.verbatimModuleSyntax = false;
+  }
+
+  const fixer = new LlmFixer(fixerOptions(flags, { cwd, files: [entry], compilerOptions: options }));
+  const outDir = path.join(fixer.config.cacheDir || path.join(cwd, ".llmtsc"), "run", hashText(entry).slice(0, 12));
+  fs.rmSync(outDir, { recursive: true, force: true });
+  Object.assign(options, {
+    outDir,
+    rootDir,
+    noEmit: false,
+    noEmitOnError: false,
+    emitDeclarationOnly: false,
+    declaration: false,
+    composite: false,
+    incremental: false,
+    allowImportingTsExtensions: false,
+    sourceMap: false,
+    inlineSourceMap: true,
+  });
+
+  const report = await fixer.ensureFresh();
+  if (flags.showFixes) printFixes(fixer);
+  if (!report) return 1;
+  for (const program of fixer.getPrograms()) program.emit();
+
+  // Tell Node which module format the emitted .js files are in.
+  let type = "commonjs";
+  if (nodeModule) {
+    let dir = path.dirname(entry);
+    while (true) {
+      const pkg = path.join(dir, "package.json");
+      if (fs.existsSync(pkg)) {
+        type = JSON.parse(fs.readFileSync(pkg, "utf8")).type === "module" ? "module" : "commonjs";
+        break;
+      }
+      if (path.dirname(dir) === dir) break;
+      dir = path.dirname(dir);
+    }
+  }
+  fs.mkdirSync(outDir, { recursive: true });
+  fs.writeFileSync(path.join(outDir, "package.json"), JSON.stringify({ type }));
+
+  const out = path
+    .join(outDir, path.relative(rootDir, entry))
+    .replace(/\.mts$/, ".mjs")
+    .replace(/\.cts$/, ".cjs")
+    .replace(/\.tsx?$/, ".js");
+  if (!fs.existsSync(out)) {
+    process.stderr.write(`llmtsc: compilation produced no output for ${file}\n`);
+    return 1;
+  }
+  const child = spawn(process.execPath, ["--enable-source-maps", out, ...scriptArgs], { stdio: "inherit", cwd });
+  return new Promise<number>((resolve) => child.on("exit", (code, signal) => resolve(code ?? (signal ? 1 : 0))));
 }

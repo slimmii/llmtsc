@@ -46,12 +46,18 @@ interface Project {
 
 export const normalizePath = (f: string) => path.resolve(f).replace(/\\/g, "/");
 
+/**
+ * Prefer the project's own TypeScript (so diagnostics match its version), but only if it still ships
+ * the classic compiler API. TypeScript 7 (the native port) does not, so fall back to our bundled 5.x/6.x.
+ */
 export function loadTypeScript(cwd: string): typeof TS {
   try {
-    return require(require.resolve("typescript", { paths: [cwd] }));
+    const ts = require(require.resolve("typescript", { paths: [cwd] }));
+    if (typeof ts.createProgram === "function" && typeof ts.parseCommandLine === "function") return ts;
   } catch {
-    return require("typescript");
+    // not installed in the project
   }
+  return require("typescript");
 }
 
 /**

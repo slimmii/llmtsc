@@ -1,0 +1,53 @@
+{
+  "name": "llmtsc",
+  "version": "0.1.0",
+  "description": "A TypeScript compiler front-end that asks an LLM to fix type errors and typos in memory before transpiling. Your source files are never modified.",
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "llmtsc": "bin/llmtsc.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/vite.d.ts",
+      "import": "./esm/vite.mjs",
+      "default": "./dist/vite.js"
+    },
+    "./webpack-loader": {
+      "types": "./dist/webpack-loader.d.ts",
+      "default": "./dist/webpack-loader.js"
+    },
+    "./register": "./dist/register.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "esm",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node test/run.js",
+    "prepublishOnly": "npm test"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
+  "peerDependencies": {
+    "typescript": ">=4.7"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.132.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.4",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.4"
+  }
+}

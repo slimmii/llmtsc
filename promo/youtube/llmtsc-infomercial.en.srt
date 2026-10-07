@@ -1,0 +1,119 @@
+1
+00:00:00,760 --> 00:00:02,580
+Are you a former vibe coder?
+
+2
+00:00:02,600 --> 00:00:05,660
+Haven't typed a single line of code since 2024?
+
+3
+00:00:06,480 --> 00:00:08,880
+You dream of real development again.
+
+4
+00:00:08,900 --> 00:00:10,920
+Just you and a keyboard.
+
+5
+00:00:10,940 --> 00:00:12,040
+But you forgot.
+
+6
+00:00:12,060 --> 00:00:13,860
+Where does the semicolon go?
+
+7
+00:00:14,000 --> 00:00:15,600
+What is a const?
+
+8
+00:00:16,060 --> 00:00:18,220
+There's GOT to be a better way!
+
+9
+00:00:19,900 --> 00:00:25,600
+Introducing llmtsc, the TypeScript compiler for people who forgot TypeScript
+
+10
+00:00:26,240 --> 00:00:29,860
+Just write anything that remotely looks like a React project.
+
+11
+00:00:30,159 --> 00:00:33,620
+llmtsc sends your mistakes to an AI,
+
+12
+00:00:33,640 --> 00:00:34,740
+fixes them in memory,
+
+13
+00:00:34,760 --> 00:00:36,500
+and compiles the result,
+
+14
+00:00:36,600 --> 00:00:38,340
+and it actually runs!
+
+15
+00:00:38,720 --> 00:00:41,340
+Your source files are never modified.
+
+16
+00:00:41,380 --> 00:00:44,000
+Your shame stays exactly where you left it
+
+17
+00:00:44,640 --> 00:00:48,520
+DAVE: I wrote “improt Reakt” and it shipped to production!
+
+18
+00:00:48,720 --> 00:00:53,720
+PRIYA: My code has 400 type errors. My build has zero.
+
+19
+00:00:53,740 --> 00:00:55,220
+But wait, there's more.
+
+20
+00:00:55,240 --> 00:00:57,180
+It works with Angular too!
+
+21
+00:00:58,940 --> 00:00:59,820
+…anyway.
+
+22
+00:01:00,280 --> 00:01:01,320
+How much would you pay?
+
+23
+00:01:01,340 --> 00:01:02,060
+Don't answer.
+
+24
+00:01:02,080 --> 00:01:02,800
+It's free!
+
+25
+00:01:02,820 --> 00:01:05,060
+Just bring your own API key
+
+26
+00:01:05,960 --> 00:01:06,900
+Install now.
+
+27
+00:01:06,920 --> 00:01:09,380
+Operators are hallucinating standing by
+
+28
+00:01:12,060 --> 00:01:13,760
+This has been a paid programming,
+
+29
+00:01:13,780 --> 00:01:15,040
+except it's free.
+
+30
+00:01:15,060 --> 00:01:16,680
+Star it on GitHub

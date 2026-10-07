@@ -4,3 +4,5 @@ renders/
 .audition/
 .stt/
 .hyperframes/
+youtube/*.mp4
+youtube/thumbnail.png

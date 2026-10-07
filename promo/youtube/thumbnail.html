@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><meta charset="UTF-8"><title>llmtsc thumbnail</title>
+<style>
+@font-face{font-family:"Anton";src:url("../assets/fonts/anton-400.woff2") format("woff2");}
+@font-face{font-family:"Inter";src:url("../assets/fonts/inter-900.woff2") format("woff2");font-weight:900;}
+@font-face{font-family:"JB";src:url("../assets/fonts/jbmono-700.woff2") format("woff2");font-weight:700;}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1280px;height:720px;overflow:hidden;background:#1B2FB8}
+#t{position:relative;width:1280px;height:720px;overflow:hidden;background:radial-gradient(ellipse 70% 70% at 70% 45%,#2E46E0 0%,#1B2FB8 45%,#0E1A7A 100%);}
+#rays{position:absolute;left:880px;top:330px;width:2400px;height:2400px;margin:-1200px 0 0 -1200px;border-radius:50%;background:repeating-conic-gradient(from 4deg,rgba(255,212,0,0.15) 0deg 9deg,rgba(255,212,0,0) 9deg 18deg);}
+#h{position:absolute;left:46px;top:30px;font-family:"Anton";font-size:150px;line-height:0.92;color:#FFD400;text-transform:uppercase;text-shadow:8px 8px 0 #0E1A7A,0 0 40px rgba(0,0,0,0.35);-webkit-text-stroke:3px #0E1A7A;paint-order:stroke fill;}
+#h span{color:#FFF8E7;}
+#code{position:absolute;left:46px;top:500px;background:#1E1E2E;border-radius:18px;padding:22px 30px;font-family:"JB";font-size:54px;color:#E6E6F0;box-shadow:0 18px 40px rgba(0,0,0,0.5);transform:rotate(-2deg);}
+#code .k{color:#C792EA;text-decoration:underline wavy #FF5370;text-decoration-thickness:5px;text-underline-offset:12px;}
+#code .f{color:#82AAFF;}
+#burst{position:absolute;left:820px;top:150px;width:430px;height:430px;transform:rotate(8deg);}
+#burst svg{position:absolute;inset:0;width:100%;height:100%;}
+#burst b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-family:"Anton";font-weight:400;font-size:88px;line-height:0.95;color:#E8202A;padding:80px;}
+#logo{position:absolute;right:40px;bottom:22px;font-family:"Anton";font-size:120px;line-height:1;background:linear-gradient(180deg,#FFFFFF 0%,#E6EAF2 38%,#8C96AB 50%,#F7F8FB 64%,#B5BDCC 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:4px #0E1A7A;filter:drop-shadow(6px 6px 0 #E8202A);}
+</style></head><body>
+<div id="t">
+  <div id="rays"></div>
+  <div id="h">FORGOT HOW<br><span>TO CODE?</span></div>
+  <div id="code"><span class="k">fucntion</span> <span class="f">App</span>() {</div>
+  <div id="burst"><svg viewBox="0 0 100 100" id="bs"></svg><b>IT STILL RUNS!</b></div>
+  <div id="logo">llmtsc</div>
+</div>
+<script>
+var n=20,p=[];for(var i=0;i<2*n;i++){var r=i%2?40:49,a=Math.PI*i/n-Math.PI/2;p.push((50+r*Math.cos(a)).toFixed(2)+","+(50+r*Math.sin(a)).toFixed(2));}
+document.getElementById("bs").innerHTML='<polygon points="'+p.join(" ")+'" fill="#FFD400" stroke="#E8202A" stroke-width="1.6" stroke-linejoin="round"/>';
+</script>
+</body></html>

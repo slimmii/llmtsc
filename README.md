@@ -1,8 +1,8 @@
 # llmtsc
 
-[![Watch the llmtsc infomercial](media/llmtsc-infomercial.jpg)](media/llmtsc-infomercial.mp4)
+[![Watch the llmtsc infomercial on YouTube](media/llmtsc-youtube-thumbnail.jpg)](https://www.youtube.com/watch?v=UnUCm0lzvB0)
 
-<sub>▶ <a href="media/llmtsc-infomercial.mp4">Watch the infomercial</a> (71s, with sound). Forgot how to code? llmtsc compiles your vibes.</sub>
+<sub>▶ <a href="https://www.youtube.com/watch?v=UnUCm0lzvB0">Watch the infomercial on YouTube</a>. Forgot how to code? llmtsc compiles your vibes.</sub>
 
 A TypeScript compiler front-end that **lets an LLM repair type errors, typos and syntax slips before transpiling**, so code with errors still compiles.
 

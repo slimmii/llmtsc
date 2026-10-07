@@ -1,0 +1,130 @@
+<!doctype html>
+<html>
+  <head><meta charset="UTF-8" /><title>V5 It actually runs</title></head>
+  <body>
+    <template>
+      <style>
+@font-face{font-family:"Anton";src:url("assets/fonts/anton-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-600.woff2") format("woff2");font-weight:600;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-800.woff2") format("woff2");font-weight:800;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-900.woff2") format("woff2");font-weight:900;}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/jbmono-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/jbmono-700.woff2") format("woff2");font-weight:700;}
+@font-face{font-family:"Caveat";src:url("assets/fonts/caveat-700.woff2") format("woff2");font-weight:700;}
+.scene{position:absolute;inset:0;overflow:hidden;font-family:"Inter",sans-serif;color:#FFF8E7;}
+.fill{position:absolute;inset:0;}
+.blue-bg{background:radial-gradient(ellipse 70% 60% at 50% 45%,#2E46E0 0%,#1B2FB8 45%,#0E1A7A 100%);}
+.shout{font-family:"Anton",sans-serif;text-transform:uppercase;line-height:0.95;letter-spacing:0.01em;}
+.hand{font-family:"Caveat",cursive;font-weight:700;}
+.mono{font-family:"JetBrains Mono",monospace;}
+/* editor window */
+.ed{position:absolute;background:#1E1E2E;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,0.55),0 0 0 3px rgba(255,255,255,0.08);overflow:hidden;display:flex;flex-direction:column;}
+.ed-bar{height:58px;flex:none;background:#151521;display:flex;align-items:center;gap:12px;padding:0 22px;}
+.ed-bar i{display:block;width:16px;height:16px;border-radius:50%;background:#FF5F57;}
+.ed-bar i:nth-child(2){background:#FEBC2E;}
+.ed-bar i:nth-child(3){background:#28C840;}
+.ed-tab{margin-left:22px;font-family:"JetBrains Mono",monospace;font-size:22px;color:#C9C9DA;background:#1E1E2E;padding:14px 24px;border-radius:10px 10px 0 0;align-self:flex-end;}
+.ed-body{flex:1;display:flex;padding:26px 0;min-height:0;}
+.ed-gutter{width:78px;flex:none;text-align:right;padding-right:22px;font-family:"JetBrains Mono",monospace;color:#7E7EA0;white-space:pre;}
+.ed-code{margin:0;font-family:"JetBrains Mono",monospace;color:#E6E6F0;white-space:pre;}
+.ed-status{height:44px;flex:none;background:#2A2A40;display:flex;align-items:center;gap:28px;padding:0 22px;font-family:"JetBrains Mono",monospace;font-size:20px;color:#C9C9DA;}
+.k{color:#C792EA}.s{color:#C3E88D}.f{color:#82AAFF}.n{color:#F78C6C}.t{color:#FFCB6B}.c{color:#8A8AA8}
+.sq{text-decoration:underline wavy #FF5370;text-decoration-thickness:3px;text-underline-offset:8px;}
+.caret{display:inline-block;width:0.6em;height:1.15em;vertical-align:-0.2em;background:#FFF8E7;}
+/* VHS */
+.grain{position:absolute;inset:-50%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");opacity:0.28;mix-blend-mode:overlay;pointer-events:none;}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.22) 0px,rgba(0,0,0,0.22) 2px,transparent 2px,transparent 5px);pointer-events:none;}
+.vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.65) 100%);pointer-events:none;}
+.osd{position:absolute;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:40px;color:#FFFFFF;text-shadow:3px 3px 0 rgba(0,0,0,0.7);letter-spacing:0.04em;}
+/* ticker */
+.ticker{position:absolute;left:0;right:0;bottom:0;height:72px;background:#E8202A;overflow:hidden;border-top:5px solid #FFD400;}
+.ticker-track{position:absolute;left:0;top:0;height:100%;display:flex;white-space:nowrap;}
+.ticker-seg{flex:none;width:1080px;height:72px;display:flex;align-items:center;font-family:"Anton",sans-serif;font-size:36px;color:#FFF8E7;letter-spacing:0.04em;}
+.ticker-seg b{color:#FFD400;font-weight:400;margin:0 18px;}
+/* starburst */
+.burst{position:absolute;display:block;}
+.burst svg{display:block;width:100%;height:100%;}
+
+#v5-demo{position:absolute;inset:0;overflow:hidden;font-family:"Inter",sans-serif;color:#FFF8E7;}
+#v5-title{position:absolute;left:0;right:0;top:200px;text-align:center;font-family:"Anton";font-size:84px;color:#FFD400;text-shadow:6px 6px 0 #0E1A7A;}
+#v5-l{left:40px;top:320px;width:1000px;height:350px;}
+#v5-r{left:40px;top:770px;width:1000px;height:350px;}
+#v5-l .ed-gutter,#v5-l .ed-code,#v5-r .ed-gutter,#v5-r .ed-code{font-size:27px;line-height:1.85;}
+#v5-l .ed-body,#v5-r .ed-body{padding:18px 0;}
+#v5-l .ed-gutter,#v5-r .ed-gutter{width:56px;padding-right:16px;}
+.v5-tl{color:#FF8A8A !important;}
+.v5-tr{color:#9BF0A8 !important;}
+.fix{background:rgba(255,212,0,0.30);border-radius:6px;box-shadow:0 0 0 3px rgba(255,212,0,0.30);color:#FFF3A6;}
+.v5-line{display:block;height:50px;}
+#v5-chip{position:absolute;left:540px;top:720px;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:#FFD400;border:7px solid #0E1A7A;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 16px 40px rgba(0,0,0,0.4);z-index:3;}
+#v5-chip b{font-family:"Anton";font-size:60px;font-weight:400;color:#0E1A7A;line-height:1;}
+#v5-chip small{font-weight:900;font-size:18px;color:#0E1A7A;letter-spacing:0.06em;}
+.v5-dot{position:absolute;width:24px;height:24px;border-radius:50%;background:#FF5370;box-shadow:0 0 0 5px rgba(255,83,112,0.35);}
+#v5-runs{left:470px;top:640px;width:560px;height:560px;z-index:4;}
+#v5-runs span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-family:"Anton";font-size:82px;line-height:0.98;color:#E8202A;padding:120px;}
+      </style>
+      <div id="v5-demo" data-composition-id="v5-demo" data-width="1080" data-height="1920" data-duration="12.4">
+<div class="fill blue-bg"></div>
+<div id="v5-title">HERE'S HOW IT WORKS</div>
+<div class="ed" id="v5-l">
+  <div class="ed-bar"><i></i><i></i><i></i><span class="ed-tab v5-tl">WHAT YOU WROTE</span></div>
+  <div class="ed-body"><div class="ed-gutter">1
+2
+3
+4
+5</div><pre class="ed-code"><span class="v5-line" id="v5-l0"><span class="k">import</span> { User, <span class="sq">fulName</span> } <span class="k">from</span> <span class="s">"./user"</span>;</span><span class="v5-line" id="v5-l1"><span class="k">const</span> u = { id: <span class="s sq">"1"</span>, <span class="sq">lastNme</span>: <span class="s">"Turing"</span> };</span><span class="v5-line" id="v5-l2"><span class="k">const</span> host = u.<span class="sq">email</span>.<span class="f">split</span>(<span class="s">"@"</span>)[<span class="n">1</span>];</span><span class="v5-line" id="v5-l3"><span class="sq">conole</span>.<span class="f">log</span>(users.<span class="sq">lenght</span>);</span><span class="v5-line" id="v5-l4">console.<span class="f">log</span>(<span class="s">"total"</span>, total<span class="sq">;</span></span></pre></div>
+</div>
+<div class="ed" id="v5-r">
+  <div class="ed-bar"><i></i><i></i><i></i><span class="ed-tab v5-tr">WHAT GETS COMPILED</span></div>
+  <div class="ed-body"><div class="ed-gutter">1
+2
+3
+4
+5</div><pre class="ed-code"><span class="v5-line" id="v5-r0"><span class="k">import</span> { User, <span class="fix">fullName</span> } <span class="k">from</span> <span class="s">"./user"</span>;</span><span class="v5-line" id="v5-r1"><span class="k">const</span> u = { id: <span class="fix">1</span>, <span class="fix">lastName</span>: <span class="s">"Turing"</span> };</span><span class="v5-line" id="v5-r2"><span class="k">const</span> host = u.email<span class="fix">?.</span><span class="f">split</span>(<span class="s">"@"</span>)[<span class="n">1</span>];</span><span class="v5-line" id="v5-r3"><span class="fix">console</span>.<span class="f">log</span>(users.<span class="fix">length</span>);</span><span class="v5-line" id="v5-r4">console.<span class="f">log</span>(<span class="s">"total"</span>, total<span class="fix">)</span>;</span></pre></div>
+</div>
+<div class="v5-dot" id="v5-d0" style="left:500px;top:419px"></div>
+<div class="v5-dot" id="v5-d1" style="left:560px;top:469px"></div>
+<div class="v5-dot" id="v5-d2" style="left:460px;top:519px"></div>
+<div class="v5-dot" id="v5-d3" style="left:420px;top:569px"></div>
+<div class="v5-dot" id="v5-d4" style="left:500px;top:619px"></div>
+<div id="v5-chip"><b>AI</b><small>VIBES IN</small></div>
+<div class="burst" id="v5-runs" data-layout-allow-overlap data-n="20" data-ri="40" data-fill="#FFD400" data-stroke="#E8202A" data-sw="1.4"><span data-layout-allow-overlap>IT ACTUALLY RUNS!</span></div>
+      </div>
+      <script>
+      (function(){
+function hfDriver(tl, dur, fn){ var p={t:0}; tl.fromTo(p,{t:0},{t:dur,duration:dur,ease:"none",immediateRender:true,onUpdate:function(){fn(p.t);}},0); fn(0); }
+function hfPick(states,t){ var s=states[0][1]; for(var i=0;i<states.length;i++){ if(t>=states[i][0]) s=states[i][1]; else break; } return s; }
+function hfTicker(track, globalStart, t){ if(!track) return; var x=((globalStart+t)*140)%1080; track.style.transform="translateX("+(-x)+"px)"; }
+function hfGrain(tl, el, dur){ if(!el) return; tl.fromTo(el,{x:0,y:0},{x:-237,y:173,duration:dur,ease:"steps("+Math.max(1,Math.round(dur*12))+")"},0); }
+function hfBursts(scope){ var els=scope.querySelectorAll(".burst"); for(var k=0;k<els.length;k++){ var el=els[k]; var n=+(el.getAttribute("data-n")||18), ri=+(el.getAttribute("data-ri")||40), ro=49; var pts=[]; for(var i=0;i<2*n;i++){ var r=(i%2)?ri:ro; var a=Math.PI*i/n-Math.PI/2; pts.push((50+r*Math.cos(a)).toFixed(2)+","+(50+r*Math.sin(a)).toFixed(2)); } el.insertAdjacentHTML("afterbegin",'<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="'+pts.join(" ")+'" fill="'+(el.getAttribute("data-fill")||"#FFD400")+'" stroke="'+(el.getAttribute("data-stroke")||"#E8202A")+'" stroke-width="'+(el.getAttribute("data-sw")||"1.6")+'" stroke-linejoin="round"/></svg>'); } }
+function hfTickerHTML(){ var s=""; for(var i=0;i<4;i++){ s+='<div class="ticker-seg"><b>★</b>NO SYNTAX REQUIRED<b>★</b>COMPILES YOUR VIBES<b>★</b>CALL NOW</div>'; } return s; }
+
+        var G=19.6, D=12.4;
+        var scope=document.getElementById("v5-demo");
+        hfBursts(scope);
+        var tk=scope.querySelector(".ticker-track"); if(tk) tk.innerHTML=hfTickerHTML();
+        var tl=gsap.timeline({paused:true});
+tl.fromTo("#v5-title",{y:-50,opacity:0},{y:0,opacity:1,duration:0.4,ease:"power3.out"},0.05);
+tl.fromTo("#v5-l",{x:-120,opacity:0},{x:0,opacity:1,duration:0.5,ease:"power3.out"},0.15);
+tl.fromTo("#v5-r",{x:120,opacity:0},{x:0,opacity:1,duration:0.5,ease:"power3.out"},0.4);
+tl.fromTo("#v5-chip",{scale:0,rotation:-90},{scale:1,rotation:0,duration:0.5,ease:"back.out(2)"},4.1);
+tl.fromTo("#v5-chip",{scale:1},{scale:1.12,duration:0.25,ease:"sine.inOut",yoyo:true,repeat:5,immediateRender:false},4.9);
+for(var i=0;i<5;i++){
+  var d=scope.querySelector("#v5-d"+i), dx=540-12-parseFloat(d.style.left), dy=720-12-parseFloat(d.style.top);
+  tl.fromTo("#v5-d"+i,{x:0,y:0,scale:0,opacity:0},{scale:1,opacity:1,duration:0.2,ease:"back.out(2)"},5.6+i*0.08);
+  tl.to("#v5-d"+i,{x:dx,y:dy,scale:0.4,duration:0.5,ease:"power2.in"},6.0+i*0.12);
+  tl.to("#v5-d"+i,{opacity:0,duration:0.08},6.5+i*0.12);
+}
+tl.fromTo("#v5-chip",{rotation:0},{rotation:360,duration:0.7,ease:"power2.inOut",immediateRender:false},6.9);
+for(var j=0;j<5;j++){
+  tl.fromTo("#v5-r"+j,{clipPath:"inset(0 100% 0 0)"},{clipPath:"inset(0 0% 0 0)",duration:0.3,ease:"power2.out"},7.6+j*0.4);
+  tl.to("#v5-l"+j+" .sq",{textDecorationColor:"rgba(255,83,112,0)",duration:0.2},7.6+j*0.4);
+}
+tl.fromTo("#v5-runs",{scale:0,rotation:-40},{scale:1,rotation:-8,duration:0.5,ease:"back.out(2)"},10.9);
+        window.__timelines["v5-demo"]=tl;
+      })();
+      </script>
+    </template>
+  </body>
+</html>

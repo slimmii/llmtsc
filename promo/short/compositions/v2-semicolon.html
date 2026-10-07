@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head><meta charset="UTF-8" /><title>V2 Where does the semicolon go</title></head>
+  <body>
+    <template>
+      <style>
+@font-face{font-family:"Anton";src:url("assets/fonts/anton-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-600.woff2") format("woff2");font-weight:600;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-800.woff2") format("woff2");font-weight:800;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-900.woff2") format("woff2");font-weight:900;}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/jbmono-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/jbmono-700.woff2") format("woff2");font-weight:700;}
+@font-face{font-family:"Caveat";src:url("assets/fonts/caveat-700.woff2") format("woff2");font-weight:700;}
+.scene{position:absolute;inset:0;overflow:hidden;font-family:"Inter",sans-serif;color:#FFF8E7;}
+.fill{position:absolute;inset:0;}
+.blue-bg{background:radial-gradient(ellipse 70% 60% at 50% 45%,#2E46E0 0%,#1B2FB8 45%,#0E1A7A 100%);}
+.shout{font-family:"Anton",sans-serif;text-transform:uppercase;line-height:0.95;letter-spacing:0.01em;}
+.hand{font-family:"Caveat",cursive;font-weight:700;}
+.mono{font-family:"JetBrains Mono",monospace;}
+/* editor window */
+.ed{position:absolute;background:#1E1E2E;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,0.55),0 0 0 3px rgba(255,255,255,0.08);overflow:hidden;display:flex;flex-direction:column;}
+.ed-bar{height:58px;flex:none;background:#151521;display:flex;align-items:center;gap:12px;padding:0 22px;}
+.ed-bar i{display:block;width:16px;height:16px;border-radius:50%;background:#FF5F57;}
+.ed-bar i:nth-child(2){background:#FEBC2E;}
+.ed-bar i:nth-child(3){background:#28C840;}
+.ed-tab{margin-left:22px;font-family:"JetBrains Mono",monospace;font-size:22px;color:#C9C9DA;background:#1E1E2E;padding:14px 24px;border-radius:10px 10px 0 0;align-self:flex-end;}
+.ed-body{flex:1;display:flex;padding:26px 0;min-height:0;}
+.ed-gutter{width:78px;flex:none;text-align:right;padding-right:22px;font-family:"JetBrains Mono",monospace;color:#7E7EA0;white-space:pre;}
+.ed-code{margin:0;font-family:"JetBrains Mono",monospace;color:#E6E6F0;white-space:pre;}
+.ed-status{height:44px;flex:none;background:#2A2A40;display:flex;align-items:center;gap:28px;padding:0 22px;font-family:"JetBrains Mono",monospace;font-size:20px;color:#C9C9DA;}
+.k{color:#C792EA}.s{color:#C3E88D}.f{color:#82AAFF}.n{color:#F78C6C}.t{color:#FFCB6B}.c{color:#8A8AA8}
+.sq{text-decoration:underline wavy #FF5370;text-decoration-thickness:3px;text-underline-offset:8px;}
+.caret{display:inline-block;width:0.6em;height:1.15em;vertical-align:-0.2em;background:#FFF8E7;}
+/* VHS */
+.grain{position:absolute;inset:-50%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");opacity:0.28;mix-blend-mode:overlay;pointer-events:none;}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.22) 0px,rgba(0,0,0,0.22) 2px,transparent 2px,transparent 5px);pointer-events:none;}
+.vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.65) 100%);pointer-events:none;}
+.osd{position:absolute;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:40px;color:#FFFFFF;text-shadow:3px 3px 0 rgba(0,0,0,0.7);letter-spacing:0.04em;}
+/* ticker */
+.ticker{position:absolute;left:0;right:0;bottom:0;height:72px;background:#E8202A;overflow:hidden;border-top:5px solid #FFD400;}
+.ticker-track{position:absolute;left:0;top:0;height:100%;display:flex;white-space:nowrap;}
+.ticker-seg{flex:none;width:1080px;height:72px;display:flex;align-items:center;font-family:"Anton",sans-serif;font-size:36px;color:#FFF8E7;letter-spacing:0.04em;}
+.ticker-seg b{color:#FFD400;font-weight:400;margin:0 18px;}
+/* starburst */
+.burst{position:absolute;display:block;}
+.burst svg{display:block;width:100%;height:100%;}
+
+#v2-semicolon{position:absolute;inset:0;overflow:hidden;font-family:"Inter",sans-serif;color:#FFF8E7;}
+#v2-room{background:radial-gradient(ellipse 90% 60% at 50% 38%,#5a5a5a 0%,#2a2a2a 55%,#0d0d0d 100%);}
+#v2-stage{filter:grayscale(1) contrast(1.12);}
+#v2-cam{position:absolute;inset:0;}
+#v2-badge{position:absolute;left:290px;top:220px;width:500px;height:250px;background:#2b2b2b;border-radius:24px;border:5px solid #8a8a8a;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+#v2-num{font-family:"Anton";font-size:150px;line-height:1;color:#fff;}
+#v2-lbl{font-family:"Anton";font-size:40px;letter-spacing:0.08em;color:#d0d0d0;}
+#v2-ed{left:50px;top:520px;width:980px;height:560px;}
+#v2-ed .ed-gutter,#v2-ed .ed-code{font-size:34px;line-height:1.7;}
+#v2-scrim{background:rgba(0,0,0,0.75);opacity:0;}
+#v2-q1,#v2-q2{position:absolute;left:0;right:0;top:230px;height:900px;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;}
+.v2-cap{display:block;font-family:"Anton";font-size:130px;line-height:1;color:#fff;text-align:center;}
+#v2-semi{display:block;font-family:"JetBrains Mono";font-weight:700;font-size:420px;line-height:0.9;color:#fff;}
+#v2-const{display:block;font-family:"JetBrains Mono";font-weight:700;font-size:220px;line-height:1.1;color:#fff;}
+#v2-pause{left:60px;top:1090px;}
+      </style>
+      <div id="v2-semicolon" data-composition-id="v2-semicolon" data-width="1080" data-height="1920" data-duration="5.3">
+<div id="v2-room" class="fill"></div>
+<div id="v2-stage" class="fill">
+  <div id="v2-cam">
+    <div id="v2-badge"><div id="v2-num">120</div><div id="v2-lbl">PROBLEMS</div></div>
+    <div class="ed" id="v2-ed">
+      <div class="ed-bar"><i></i><i></i><i></i><span class="ed-tab">App.tsx</span></div>
+      <div class="ed-body"><div class="ed-gutter">1
+2
+3
+4
+5
+6</div><pre class="ed-code"><span class="k sq">improt</span> <span class="t sq">Reakt</span> <span class="k">from</span> <span class="s sq">"reakt"</span>
+<span class="k sq">fucntion</span> <span class="f">App</span>() {
+  <span class="k">const</span> <span class="sq">const</span> = <span class="sq">cosnt</span>
+  <span class="sq">conole</span>.<span class="f">log</span>(<span class="sq">usrs</span>)
+  <span class="k sq">retrun</span> &lt;<span class="t sq">dvi</span>/&gt;
+<span class="sq">}}</span></pre></div>
+    </div>
+  </div>
+  <div class="fill" style="overflow:hidden"><div class="grain" id="v2-grain"></div></div>
+  <div class="scan"></div><div class="vig"></div>
+  <div class="osd" id="v2-pause">❚❚ PAUSE</div>
+  <div class="fill" id="v2-scrim"></div>
+  <div id="v2-q1" data-layout-allow-overlap><span class="v2-cap" data-layout-allow-overlap>WHERE DOES THE</span><span id="v2-semi" data-layout-allow-overlap>;</span><span class="v2-cap" data-layout-allow-overlap>GO?</span></div>
+  <div id="v2-q2" data-layout-allow-overlap><span class="v2-cap" data-layout-allow-overlap>WHAT IS A</span><span id="v2-const" data-layout-allow-overlap>const</span><span class="v2-cap" data-layout-allow-overlap>???</span></div>
+</div>
+      </div>
+      <script>
+      (function(){
+function hfDriver(tl, dur, fn){ var p={t:0}; tl.fromTo(p,{t:0},{t:dur,duration:dur,ease:"none",immediateRender:true,onUpdate:function(){fn(p.t);}},0); fn(0); }
+function hfPick(states,t){ var s=states[0][1]; for(var i=0;i<states.length;i++){ if(t>=states[i][0]) s=states[i][1]; else break; } return s; }
+function hfTicker(track, globalStart, t){ if(!track) return; var x=((globalStart+t)*140)%1080; track.style.transform="translateX("+(-x)+"px)"; }
+function hfGrain(tl, el, dur){ if(!el) return; tl.fromTo(el,{x:0,y:0},{x:-237,y:173,duration:dur,ease:"steps("+Math.max(1,Math.round(dur*12))+")"},0); }
+function hfBursts(scope){ var els=scope.querySelectorAll(".burst"); for(var k=0;k<els.length;k++){ var el=els[k]; var n=+(el.getAttribute("data-n")||18), ri=+(el.getAttribute("data-ri")||40), ro=49; var pts=[]; for(var i=0;i<2*n;i++){ var r=(i%2)?ri:ro; var a=Math.PI*i/n-Math.PI/2; pts.push((50+r*Math.cos(a)).toFixed(2)+","+(50+r*Math.sin(a)).toFixed(2)); } el.insertAdjacentHTML("afterbegin",'<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="'+pts.join(" ")+'" fill="'+(el.getAttribute("data-fill")||"#FFD400")+'" stroke="'+(el.getAttribute("data-stroke")||"#E8202A")+'" stroke-width="'+(el.getAttribute("data-sw")||"1.6")+'" stroke-linejoin="round"/></svg>'); } }
+function hfTickerHTML(){ var s=""; for(var i=0;i<4;i++){ s+='<div class="ticker-seg"><b>★</b>NO SYNTAX REQUIRED<b>★</b>COMPILES YOUR VIBES<b>★</b>CALL NOW</div>'; } return s; }
+
+        var G=5.6, D=5.3;
+        var scope=document.getElementById("v2-semicolon");
+        hfBursts(scope);
+        var tk=scope.querySelector(".ticker-track"); if(tk) tk.innerHTML=hfTickerHTML();
+        var tl=gsap.timeline({paused:true});
+var num=scope.querySelector("#v2-num"), pz=scope.querySelector("#v2-pause");
+hfDriver(tl,D,function(t){ var p=Math.min(1,t/0.35); num.textContent=String(Math.round(120+727*p)); pz.style.opacity=(t>=0.35&&((t-0.35)%1)<0.6)?"1":"0"; });
+tl.fromTo("#v2-cam",{rotation:0},{rotation:-2.5,duration:0.12,ease:"power4.out"},0.35);
+tl.fromTo("#v2-stage",{x:0},{x:3,duration:D,ease:"steps(32)",yoyo:true},0);
+hfGrain(tl,"#v2-grain",D);
+tl.fromTo("#v2-scrim",{opacity:0},{opacity:1,duration:0.3,ease:"power2.out"},1.1);
+tl.fromTo("#v2-q1",{opacity:0,scale:1.25},{opacity:1,scale:1,duration:0.3,ease:"power4.out"},1.35);
+tl.fromTo("#v2-semi",{rotation:-25},{rotation:12,duration:1.6,ease:"sine.inOut"},1.4);
+tl.to("#v2-q1",{opacity:0,scale:0.9,duration:0.2,ease:"power2.in"},3.15);
+tl.fromTo("#v2-q2",{opacity:0,scale:1.25},{opacity:1,scale:1,duration:0.3,ease:"power4.out"},3.35);
+tl.fromTo("#v2-const",{scale:0.9},{scale:1.08,duration:1.8,ease:"sine.inOut"},3.4);
+        window.__timelines["v2-semicolon"]=tl;
+      })();
+      </script>
+    </template>
+  </body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="UTF-8"><title>03 There's got to be a better way</title></head>
+  <body>
+    <template>
+      <style>
+@font-face{font-family:"Anton";src:url("assets/fonts/anton-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-600.woff2") format("woff2");font-weight:600;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-800.woff2") format("woff2");font-weight:800;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-900.woff2") format("woff2");font-weight:900;}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/jbmono-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/jbmono-700.woff2") format("woff2");font-weight:700;}
+@font-face{font-family:"Caveat";src:url("assets/fonts/caveat-700.woff2") format("woff2");font-weight:700;}
+.scene{position:absolute;inset:0;overflow:hidden;font-family:"Inter",sans-serif;color:#FFF8E7;}
+.fill{position:absolute;inset:0;}
+.blue-bg{background:radial-gradient(ellipse 70% 60% at 50% 45%,#2E46E0 0%,#1B2FB8 45%,#0E1A7A 100%);}
+.shout{font-family:"Anton",sans-serif;text-transform:uppercase;line-height:0.95;letter-spacing:0.01em;}
+.hand{font-family:"Caveat",cursive;font-weight:700;}
+.mono{font-family:"JetBrains Mono",monospace;}
+/* editor window */
+.ed{position:absolute;background:#1E1E2E;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,0.55),0 0 0 3px rgba(255,255,255,0.08);overflow:hidden;display:flex;flex-direction:column;}
+.ed-bar{height:58px;flex:none;background:#151521;display:flex;align-items:center;gap:12px;padding:0 22px;}
+.ed-bar i{display:block;width:16px;height:16px;border-radius:50%;background:#FF5F57;}
+.ed-bar i:nth-child(2){background:#FEBC2E;}
+.ed-bar i:nth-child(3){background:#28C840;}
+.ed-tab{margin-left:22px;font-family:"JetBrains Mono",monospace;font-size:22px;color:#C9C9DA;background:#1E1E2E;padding:14px 24px;border-radius:10px 10px 0 0;align-self:flex-end;}
+.ed-body{flex:1;display:flex;padding:26px 0;min-height:0;}
+.ed-gutter{width:78px;flex:none;text-align:right;padding-right:22px;font-family:"JetBrains Mono",monospace;color:#7E7EA0;white-space:pre;}
+.ed-code{margin:0;font-family:"JetBrains Mono",monospace;color:#E6E6F0;white-space:pre;}
+.ed-status{height:44px;flex:none;background:#2A2A40;display:flex;align-items:center;gap:28px;padding:0 22px;font-family:"JetBrains Mono",monospace;font-size:20px;color:#C9C9DA;}
+.k{color:#C792EA}.s{color:#C3E88D}.f{color:#82AAFF}.n{color:#F78C6C}.t{color:#FFCB6B}.c{color:#8A8AA8}
+.sq{text-decoration:underline wavy #FF5370;text-decoration-thickness:3px;text-underline-offset:8px;}
+.caret{display:inline-block;width:0.6em;height:1.15em;vertical-align:-0.2em;background:#FFF8E7;}
+/* VHS */
+.grain{position:absolute;inset:-50%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");opacity:0.28;mix-blend-mode:overlay;pointer-events:none;}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.22) 0px,rgba(0,0,0,0.22) 2px,transparent 2px,transparent 5px);pointer-events:none;}
+.vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.65) 100%);pointer-events:none;}
+.osd{position:absolute;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:40px;color:#FFFFFF;text-shadow:3px 3px 0 rgba(0,0,0,0.7);letter-spacing:0.04em;}
+/* ticker */
+.ticker{position:absolute;left:0;right:0;bottom:0;height:72px;background:#E8202A;overflow:hidden;border-top:5px solid #FFD400;}
+.ticker-track{position:absolute;left:0;top:0;height:100%;display:flex;white-space:nowrap;}
+.ticker-seg{flex:none;width:1080px;height:72px;display:flex;align-items:center;font-family:"Anton",sans-serif;font-size:36px;color:#FFF8E7;letter-spacing:0.04em;}
+.ticker-seg b{color:#FFD400;font-weight:400;margin:0 18px;}
+/* starburst */
+.burst{position:absolute;display:block;}
+.burst svg{display:block;width:100%;height:100%;}
+
+#s03-better-way{position:absolute;inset:0;overflow:hidden;font-family:"Inter",sans-serif;color:#FFF8E7;}
+#s03-room{background:radial-gradient(ellipse 80% 70% at 50% 45%,#4a4a4a 0%,#202020 55%,#0a0a0a 100%);}
+#s03-stage{filter:grayscale(1) contrast(1.15);}
+#s03-ghost{position:absolute;left:150px;top:140px;width:1240px;height:720px;filter:blur(10px);opacity:0.45;}
+#s03-ghost .ed-gutter,#s03-ghost .ed-code{font-size:38px;line-height:1.65;}
+#s03-lines{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+.s03-l{display:block;font-family:"Anton";font-size:200px;line-height:0.98;color:#fff;text-transform:uppercase;text-shadow:10px 10px 0 #000;}
+#s03-play{left:110px;top:60px;}
+      </style>
+      <div data-hf-id="hf-8f5s" id="s03-better-way" data-composition-id="s03-better-way" data-width="1920" data-height="1080" data-duration="3.4">
+<div data-hf-id="hf-w59t" id="s03-room" class="fill"></div>
+<div data-hf-id="hf-rk0y" id="s03-stage" class="fill">
+  <div data-hf-id="hf-vuty" class="ed" id="s03-ghost" data-layout-ignore="">
+    <div data-hf-id="hf-8r17" class="ed-bar"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-s2lm" class="ed-tab">App.tsx</span></div>
+    <div data-hf-id="hf-3sgw" class="ed-body"><div data-hf-id="hf-llu0" class="ed-gutter">1
+2
+3
+4
+5
+6</div><pre data-hf-id="hf-f7hs" class="ed-code"><span data-hf-id="hf-i263" class="k sq">improt</span> { <span data-hf-id="hf-h01k" class="t sq">Reakt</span> } <span data-hf-id="hf-0rzw" class="k">from</span> <span data-hf-id="hf-30th" class="s sq">"reakt"</span>
+<span data-hf-id="hf-etv6" class="k sq">fucntion</span> <span data-hf-id="hf-rm6o" class="f">App</span>() {
+  <span data-hf-id="hf-5jgn" class="k">const</span> <span data-hf-id="hf-pnmc" class="sq">const</span> = <span data-hf-id="hf-0k2u" class="sq">cosnt</span>
+  <span data-hf-id="hf-pkqn" class="sq">conole</span>.<span data-hf-id="hf-adql" class="f">log</span>(users.<span data-hf-id="hf-kj5p" class="sq">lenght</span>)
+  <span data-hf-id="hf-hodo" class="k sq">retrun</span> &lt;<span data-hf-id="hf-m37a" class="t">div</span>&gt;Helo&lt;/<span data-hf-id="hf-d82u" class="t sq">dvi</span>&gt;
+<span data-hf-id="hf-gg27" class="sq">}}</span></pre></div>
+  </div>
+  <div data-hf-id="hf-wten" class="fill" style="background:rgba(0,0,0,0.45)"></div>
+  <div data-hf-id="hf-dixt" id="s03-lines">
+    <span data-hf-id="hf-xpdq" class="s03-l" id="s03-a">THERE'S GOT</span>
+    <span data-hf-id="hf-4ee8" class="s03-l" id="s03-b">TO BE A</span>
+    <span data-hf-id="hf-wcua" class="s03-l" id="s03-c">BETTER WAY!</span>
+  </div>
+  <div data-hf-id="hf-2rhn" class="fill" style="overflow:hidden"><div data-hf-id="hf-6qk7" class="grain" id="s03-grain"></div></div>
+  <div data-hf-id="hf-az1f" class="scan"></div><div data-hf-id="hf-e4a6" class="vig"></div>
+  <div data-hf-id="hf-3p9r" class="osd" id="s03-play">PLAY ▶</div>
+</div>
+      </div>
+      <script>
+      (function(){
+function hfDriver(tl, dur, fn){ var p={t:0}; tl.fromTo(p,{t:0},{t:dur,duration:dur,ease:"none",immediateRender:true,onUpdate:function(){fn(p.t);}},0); fn(0); }
+function hfPick(states,t){ var s=states[0][1]; for(var i=0;i<states.length;i++){ if(t>=states[i][0]) s=states[i][1]; else break; } return s; }
+function hfTicker(track, globalStart, t){ if(!track) return; var x=((globalStart+t)*140)%1080; track.style.transform="translateX("+(-x)+"px)"; }
+function hfGrain(tl, el, dur){ if(!el) return; tl.fromTo(el,{x:0,y:0},{x:-237,y:173,duration:dur,ease:"steps("+Math.max(1,Math.round(dur*12))+")"},0); }
+function hfBursts(scope){ var els=scope.querySelectorAll(".burst"); for(var k=0;k<els.length;k++){ var el=els[k]; var n=+(el.getAttribute("data-n")||18), ri=+(el.getAttribute("data-ri")||40), ro=49; var pts=[]; for(var i=0;i<2*n;i++){ var r=(i%2)?ri:ro; var a=Math.PI*i/n-Math.PI/2; pts.push((50+r*Math.cos(a)).toFixed(2)+","+(50+r*Math.sin(a)).toFixed(2)); } el.insertAdjacentHTML("afterbegin",'<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="'+pts.join(" ")+'" fill="'+(el.getAttribute("data-fill")||"#FFD400")+'" stroke="'+(el.getAttribute("data-stroke")||"#E8202A")+'" stroke-width="'+(el.getAttribute("data-sw")||"1.6")+'" stroke-linejoin="round"/></svg>'); } }
+function hfTickerHTML(){ var s=""; for(var i=0;i<4;i++){ s+='<div class="ticker-seg"><b>★</b>NO SYNTAX REQUIRED<b>★</b>COMPILES YOUR VIBES<b>★</b>CALL NOW</div>'; } return s; }
+
+        var G=15.8, D=3.4;
+        var scope=document.getElementById("s03-better-way");
+        hfBursts(scope);
+        var tk=scope.querySelector(".ticker-track"); if(tk) tk.innerHTML=hfTickerHTML();
+        var tl=gsap.timeline({paused:true});
+[["#s03-a",0.2],["#s03-b",0.8],["#s03-c",1.25]].forEach(function(p){
+  tl.fromTo(p[0],{scale:1.9,opacity:0},{scale:1,opacity:1,duration:0.22,ease:"power4.in"},p[1]);
+});
+tl.fromTo("#s03-lines",{x:0,y:0},{x:-14,y:8,duration:0.05,ease:"none",yoyo:true,repeat:5},1.47);
+hfGrain(tl,"#s03-grain",D);
+        window.__timelines["s03-better-way"]=tl;
+      })();
+      </script>
+    </template>
+  </body>
+</html>

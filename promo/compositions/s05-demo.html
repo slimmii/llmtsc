@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="UTF-8"><title>05 It actually runs</title></head>
+  <body>
+    <template>
+      <style>
+@font-face{font-family:"Anton";src:url("assets/fonts/anton-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-600.woff2") format("woff2");font-weight:600;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-800.woff2") format("woff2");font-weight:800;}
+@font-face{font-family:"Inter";src:url("assets/fonts/inter-900.woff2") format("woff2");font-weight:900;}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/jbmono-400.woff2") format("woff2");font-weight:400;}
+@font-face{font-family:"JetBrains Mono";src:url("assets/fonts/jbmono-700.woff2") format("woff2");font-weight:700;}
+@font-face{font-family:"Caveat";src:url("assets/fonts/caveat-700.woff2") format("woff2");font-weight:700;}
+.scene{position:absolute;inset:0;overflow:hidden;font-family:"Inter",sans-serif;color:#FFF8E7;}
+.fill{position:absolute;inset:0;}
+.blue-bg{background:radial-gradient(ellipse 70% 60% at 50% 45%,#2E46E0 0%,#1B2FB8 45%,#0E1A7A 100%);}
+.shout{font-family:"Anton",sans-serif;text-transform:uppercase;line-height:0.95;letter-spacing:0.01em;}
+.hand{font-family:"Caveat",cursive;font-weight:700;}
+.mono{font-family:"JetBrains Mono",monospace;}
+/* editor window */
+.ed{position:absolute;background:#1E1E2E;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,0.55),0 0 0 3px rgba(255,255,255,0.08);overflow:hidden;display:flex;flex-direction:column;}
+.ed-bar{height:58px;flex:none;background:#151521;display:flex;align-items:center;gap:12px;padding:0 22px;}
+.ed-bar i{display:block;width:16px;height:16px;border-radius:50%;background:#FF5F57;}
+.ed-bar i:nth-child(2){background:#FEBC2E;}
+.ed-bar i:nth-child(3){background:#28C840;}
+.ed-tab{margin-left:22px;font-family:"JetBrains Mono",monospace;font-size:22px;color:#C9C9DA;background:#1E1E2E;padding:14px 24px;border-radius:10px 10px 0 0;align-self:flex-end;}
+.ed-body{flex:1;display:flex;padding:26px 0;min-height:0;}
+.ed-gutter{width:78px;flex:none;text-align:right;padding-right:22px;font-family:"JetBrains Mono",monospace;color:#7E7EA0;white-space:pre;}
+.ed-code{margin:0;font-family:"JetBrains Mono",monospace;color:#E6E6F0;white-space:pre;}
+.ed-status{height:44px;flex:none;background:#2A2A40;display:flex;align-items:center;gap:28px;padding:0 22px;font-family:"JetBrains Mono",monospace;font-size:20px;color:#C9C9DA;}
+.k{color:#C792EA}.s{color:#C3E88D}.f{color:#82AAFF}.n{color:#F78C6C}.t{color:#FFCB6B}.c{color:#8A8AA8}
+.sq{text-decoration:underline wavy #FF5370;text-decoration-thickness:3px;text-underline-offset:8px;}
+.caret{display:inline-block;width:0.6em;height:1.15em;vertical-align:-0.2em;background:#FFF8E7;}
+/* VHS */
+.grain{position:absolute;inset:-50%;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.55'/></svg>");opacity:0.28;mix-blend-mode:overlay;pointer-events:none;}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.22) 0px,rgba(0,0,0,0.22) 2px,transparent 2px,transparent 5px);pointer-events:none;}
+.vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,0.65) 100%);pointer-events:none;}
+.osd{position:absolute;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:40px;color:#FFFFFF;text-shadow:3px 3px 0 rgba(0,0,0,0.7);letter-spacing:0.04em;}
+/* ticker */
+.ticker{position:absolute;left:0;right:0;bottom:0;height:72px;background:#E8202A;overflow:hidden;border-top:5px solid #FFD400;}
+.ticker-track{position:absolute;left:0;top:0;height:100%;display:flex;white-space:nowrap;}
+.ticker-seg{flex:none;width:1080px;height:72px;display:flex;align-items:center;font-family:"Anton",sans-serif;font-size:36px;color:#FFF8E7;letter-spacing:0.04em;}
+.ticker-seg b{color:#FFD400;font-weight:400;margin:0 18px;}
+/* starburst */
+.burst{position:absolute;display:block;}
+.burst svg{display:block;width:100%;height:100%;}
+
+#s05-demo{position:absolute;inset:0;overflow:hidden;font-family:"Inter",sans-serif;color:#FFF8E7;}
+#s05-title{position:absolute;left:100px;top:56px;font-family:"Anton";font-size:86px;color:#FFD400;letter-spacing:0.02em;text-shadow:6px 6px 0 #0E1A7A;}
+#s05-l{left:90px;top:200px;width:800px;height:470px;}
+#s05-r{left:1030px;top:200px;width:800px;height:470px;}
+#s05-l .ed-gutter,#s05-l .ed-code,#s05-r .ed-gutter,#s05-r .ed-code{font-size:24px;line-height:2.05;}
+#s05-l .ed-gutter,#s05-r .ed-gutter{width:58px;padding-right:18px;}
+.s05-tab-l{color:#FF8A8A !important;}
+.s05-tab-r{color:#9BF0A8 !important;}
+.fix{background:rgba(255,212,0,0.30);border-radius:6px;box-shadow:0 0 0 3px rgba(255,212,0,0.30);color:#FFF3A6;}
+.s05-line{display:block;height:49px;}
+#s05-r .s05-line{clip-path:inset(0 100% 0 0);}
+#s05-chip{position:absolute;left:960px;top:435px;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;background:#FFD400;border:7px solid #0E1A7A;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 16px 40px rgba(0,0,0,0.4);}
+#s05-chip b{font-family:"Anton";font-size:72px;font-weight:400;color:#0E1A7A;line-height:1;}
+#s05-chip small{font-weight:900;font-size:22px;color:#0E1A7A;letter-spacing:0.08em;}
+.s05-dot{position:absolute;width:26px;height:26px;border-radius:50%;background:#FF5370;box-shadow:0 0 0 5px rgba(255,83,112,0.35);}
+#s05-term{left:90px;top:705px;width:1740px;height:255px;}
+#s05-term .ed-bar{height:46px;}
+#s05-term .ed-body{padding:16px 30px;}
+#s05-term .ed-code{font-size:30px;line-height:1.55;}
+.ok{color:#9BF0A8;}.dim{color:#8A8AA8;}
+#s05-runs{right:60px;top:430px;width:560px;height:560px;}
+#s05-runs span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;font-family:"Anton";font-size:86px;line-height:0.98;color:#E8202A;padding:120px;}
+      </style>
+      <div data-hf-id="hf-fsq0" id="s05-demo" data-composition-id="s05-demo" data-width="1920" data-height="1080" data-duration="12.6">
+<div data-hf-id="hf-7euz" class="fill blue-bg"></div>
+<div data-hf-id="hf-bvo5" id="s05-title">HERE'S HOW IT WORKS</div>
+<div data-hf-id="hf-jz8u" class="ed" id="s05-l">
+  <div data-hf-id="hf-8r17" class="ed-bar"><i data-hf-id="hf-wt6k"></i><i data-hf-id="hf-zeb8"></i><i data-hf-id="hf-y7e5"></i><span data-hf-id="hf-c7z2" class="ed-tab s05-tab-l">App.tsx · WHAT YOU WROTE</span></div>
+  <div data-hf-id="hf-3sgw" class="ed-body"><div data-hf-id="hf-x39s" class="ed-gutter">1
+2
+3
+4
+5</div><pre data-hf-id="hf-i8eh" class="ed-code"><span data-hf-id="hf-km93" class="s05-line" id="s05-l0"><span data-hf-id="hf-vj3t" class="k">import</span> { User, <span data-hf-id="hf-tsor" class="sq">fulName</span> } <span data-hf-id="hf-0rzw" class="k">from</span> <span data-hf-id="hf-438c" class="s">"./user"</span>;</span><span data-hf-id="hf-ezbu" class="s05-line" id="s05-l1"><span data-hf-id="hf-5jgn" class="k">const</span> u = { id: <span data-hf-id="hf-w59t" class="s sq">"1"</span>, <span data-hf-id="hf-vn4n" class="sq">lastNme</span>: <span data-hf-id="hf-rbfn" class="s">"Turing"</span> };</span><span data-hf-id="hf-9o5z" class="s05-line" id="s05-l2"><span data-hf-id="hf-ui93" class="k">const</span> host = u.<span data-hf-id="hf-h0av" class="sq">email</span>.<span data-hf-id="hf-f92v" class="f">split</span>(<span data-hf-id="hf-8ht0" class="s">"@"</span>)[<span data-hf-id="hf-e3y0" class="n">1</span>];</span><span data-hf-id="hf-n7sm" class="s05-line" id="s05-l3"><span data-hf-id="hf-pkqn" class="sq">conole</span>.<span data-hf-id="hf-adql" class="f">log</span>(users.<span data-hf-id="hf-kj5p" class="sq">lenght</span>);</span><span data-hf-id="hf-u2em" class="s05-line" id="s05-l4">console.<span data-hf-id="hf-w18h" class="f">log</span>(<span data-hf-id="hf-qdtu" class="s">"total"</span>, total<span data-hf-id="hf-4ziy" class="sq">;</span></span></pre></div>
+</div>
+<div data-hf-id="hf-4dvc" class="ed" id="s05-r">
+  <div data-hf-id="hf-f7yz" class="ed-bar"><i data-hf-id="hf-ylp6"></i><i data-hf-id="hf-0l8b"></i><i data-hf-id="hf-0zjc"></i><span data-hf-id="hf-vt9a" class="ed-tab s05-tab-r">App.tsx · WHAT GETS COMPILED</span></div>
+  <div data-hf-id="hf-e7dk" class="ed-body"><div data-hf-id="hf-399k" class="ed-gutter">1
+2
+3
+4
+5</div><pre data-hf-id="hf-drel" class="ed-code"><span data-hf-id="hf-sr55" class="s05-line" id="s05-r0"><span data-hf-id="hf-anv1" class="k">import</span> { User, <span data-hf-id="hf-nrys" class="fix">fullName</span> } <span data-hf-id="hf-ytro" class="k">from</span> <span data-hf-id="hf-pdg4" class="s">"./user"</span>;</span><span data-hf-id="hf-9dhw" class="s05-line" id="s05-r1"><span data-hf-id="hf-u3y2" class="k">const</span> u = { id: <span data-hf-id="hf-w0wd" class="fix">1</span>, <span data-hf-id="hf-yfjd" class="fix">lastName</span>: <span data-hf-id="hf-hz8j" class="s">"Turing"</span> };</span><span data-hf-id="hf-masz" class="s05-line" id="s05-r2"><span data-hf-id="hf-tpn1" class="k">const</span> host = u.email<span data-hf-id="hf-j1p3" class="fix">?.</span><span data-hf-id="hf-cj3r" class="f">split</span>(<span data-hf-id="hf-6jto" class="s">"@"</span>)[<span data-hf-id="hf-x3dc" class="n">1</span>];</span><span data-hf-id="hf-f5kg" class="s05-line" id="s05-r3"><span data-hf-id="hf-zzp3" class="fix">console</span>.<span data-hf-id="hf-x85k" class="f">log</span>(users.<span data-hf-id="hf-dc2y" class="fix">length</span>);</span><span data-hf-id="hf-2swh" class="s05-line" id="s05-r4">console.<span data-hf-id="hf-wtuj" class="f">log</span>(<span data-hf-id="hf-hzom" class="s">"total"</span>, total<span data-hf-id="hf-5k91" class="fix">)</span>;</span></pre></div>
+</div>
+<div data-hf-id="hf-l3bj" class="s05-dot" id="s05-d0" style="left:560px;top:295px"></div>
+<div data-hf-id="hf-z7km" class="s05-dot" id="s05-d1" style="left:600px;top:344px"></div>
+<div data-hf-id="hf-hudm" class="s05-dot" id="s05-d2" style="left:520px;top:393px"></div>
+<div data-hf-id="hf-xlzu" class="s05-dot" id="s05-d3" style="left:470px;top:442px"></div>
+<div data-hf-id="hf-2nkl" class="s05-dot" id="s05-d4" style="left:560px;top:491px"></div>
+<div data-hf-id="hf-lbsg" id="s05-chip"><b data-hf-id="hf-44xr">AI</b><small data-hf-id="hf-3mm8">VIBES IN</small></div>
+<div data-hf-id="hf-z6ao" class="ed" id="s05-term">
+  <div data-hf-id="hf-etny" class="ed-bar"><i data-hf-id="hf-zsm9"></i><i data-hf-id="hf-06xa"></i><i data-hf-id="hf-26gf"></i><span data-hf-id="hf-48g4" class="ed-tab" style="padding:10px 20px;font-size:19px">zsh — ~/my-app</span></div>
+  <div data-hf-id="hf-d0gh" class="ed-body"><pre data-hf-id="hf-xfub" class="ed-code" id="s05-tcode"></pre></div>
+</div>
+<div data-hf-id="hf-6xgg" class="burst" id="s05-runs" data-layout-allow-overlap="" data-n="20" data-ri="40" data-fill="#FFD400" data-stroke="#E8202A" data-sw="1.4"><span data-hf-id="hf-0e5h" data-layout-allow-overlap="">IT ACTUALLY RUNS!</span></div>
+<div data-hf-id="hf-laaa" class="ticker"><div data-hf-id="hf-ftm8" class="ticker-track"></div></div>
+      </div>
+      <script>
+      (function(){
+function hfDriver(tl, dur, fn){ var p={t:0}; tl.fromTo(p,{t:0},{t:dur,duration:dur,ease:"none",immediateRender:true,onUpdate:function(){fn(p.t);}},0); fn(0); }
+function hfPick(states,t){ var s=states[0][1]; for(var i=0;i<states.length;i++){ if(t>=states[i][0]) s=states[i][1]; else break; } return s; }
+function hfTicker(track, globalStart, t){ if(!track) return; var x=((globalStart+t)*140)%1080; track.style.transform="translateX("+(-x)+"px)"; }
+function hfGrain(tl, el, dur){ if(!el) return; tl.fromTo(el,{x:0,y:0},{x:-237,y:173,duration:dur,ease:"steps("+Math.max(1,Math.round(dur*12))+")"},0); }
+function hfBursts(scope){ var els=scope.querySelectorAll(".burst"); for(var k=0;k<els.length;k++){ var el=els[k]; var n=+(el.getAttribute("data-n")||18), ri=+(el.getAttribute("data-ri")||40), ro=49; var pts=[]; for(var i=0;i<2*n;i++){ var r=(i%2)?ri:ro; var a=Math.PI*i/n-Math.PI/2; pts.push((50+r*Math.cos(a)).toFixed(2)+","+(50+r*Math.sin(a)).toFixed(2)); } el.insertAdjacentHTML("afterbegin",'<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="'+pts.join(" ")+'" fill="'+(el.getAttribute("data-fill")||"#FFD400")+'" stroke="'+(el.getAttribute("data-stroke")||"#E8202A")+'" stroke-width="'+(el.getAttribute("data-sw")||"1.6")+'" stroke-linejoin="round"/></svg>'); } }
+function hfTickerHTML(){ var s=""; for(var i=0;i<4;i++){ s+='<div class="ticker-seg"><b>★</b>NO SYNTAX REQUIRED<b>★</b>COMPILES YOUR VIBES<b>★</b>CALL NOW</div>'; } return s; }
+
+        var G=25.8, D=12.6;
+        var scope=document.getElementById("s05-demo");
+        hfBursts(scope);
+        var tk=scope.querySelector(".ticker-track"); if(tk) tk.innerHTML=hfTickerHTML();
+        var tl=gsap.timeline({paused:true});
+var tk=scope.querySelector(".ticker-track"), term=scope.querySelector("#s05-tcode");
+var CMD="npx llmtsc";
+var T=[[9.0,""],[9.2,"L1"],[9.75,"L2"],[10.25,"L3"]];
+var lastT="";
+hfDriver(tl,D,function(t){
+  hfTicker(tk,G,t);
+  var n=Math.max(0,Math.min(CMD.length,Math.floor((t-8.6)/0.05)));
+  var s='<span class="ok">$</span> '+CMD.slice(0,n);
+  if(t>=9.4) s+='\n<span class="ok">✓ 5 errors repaired in memory</span> <span class="dim">·</span> 0 source files modified';
+  if(t>=9.95) s+='\n<span class="ok">✓ emitted dist/</span> <span class="dim">— exit code 0 — you are a developer again</span>';
+  if(s!==lastT){ lastT=s; term.innerHTML=s; }
+});
+tl.fromTo("#s05-title",{x:-80,opacity:0},{x:0,opacity:1,duration:0.45,ease:"power3.out"},0.1);
+tl.fromTo("#s05-l",{x:-120,opacity:0},{x:0,opacity:1,duration:0.55,ease:"power3.out"},0.2);
+tl.fromTo("#s05-r",{x:120,opacity:0},{x:0,opacity:1,duration:0.55,ease:"power3.out"},0.45);
+tl.fromTo("#s05-term",{y:80,opacity:0},{y:0,opacity:1,duration:0.5,ease:"power3.out"},8.4);
+tl.fromTo("#s05-chip",{scale:0,rotation:-90},{scale:1,rotation:0,duration:0.5,ease:"back.out(2)"},4.2);
+tl.fromTo("#s05-chip",{scale:1},{scale:1.12,duration:0.25,ease:"sine.inOut",yoyo:true,repeat:5,immediateRender:false},5.0);
+for(var i=0;i<5;i++){
+  tl.fromTo("#s05-d"+i,{x:0,y:0,scale:0,opacity:0},{scale:1,opacity:1,duration:0.2,ease:"back.out(2)"},5.6+i*0.08);
+  var dx=960-13-parseFloat(scope.querySelector("#s05-d"+i).style.left), dy=435-13-parseFloat(scope.querySelector("#s05-d"+i).style.top);
+  tl.to("#s05-d"+i,{x:dx,y:dy,scale:0.4,duration:0.55,ease:"power2.in"},6.1+i*0.12);
+  tl.to("#s05-d"+i,{opacity:0,duration:0.08},6.65+i*0.12);
+}
+tl.fromTo("#s05-chip",{rotation:0},{rotation:360,duration:0.7,ease:"power2.inOut",immediateRender:false},7.0);
+for(var j=0;j<5;j++){
+  tl.fromTo("#s05-r"+j,{clipPath:"inset(0 100% 0 0)"},{clipPath:"inset(0 0% 0 0)",duration:0.3,ease:"power2.out"},7.8+j*0.4);
+  tl.to("#s05-l"+j+" .sq",{textDecorationColor:"rgba(255,83,112,0)",duration:0.2},7.8+j*0.4);
+}
+tl.fromTo("#s05-runs",{scale:0,rotation:-40},{scale:1,rotation:-8,duration:0.5,ease:"back.out(2)"},11.0);
+        window.__timelines["s05-demo"]=tl;
+      })();
+      </script>
+    </template>
+  </body>
+</html>

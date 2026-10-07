@@ -1,5 +1,9 @@
 # llmtsc
 
+[![Watch the llmtsc infomercial](media/llmtsc-infomercial.jpg)](media/llmtsc-infomercial.mp4)
+
+<sub>▶ <a href="media/llmtsc-infomercial.mp4">Watch the infomercial</a> (71s, with sound). Forgot how to code? llmtsc compiles your vibes.</sub>
+
 A TypeScript compiler front-end that **lets an LLM repair type errors, typos and syntax slips before transpiling**, so code with errors still compiles.
 
 Your source files are **never modified**. llmtsc type-checks the project, asks the LLM for minimal fixes, keeps the repaired text in memory and hands *that* to the compiler or bundler. What's on disk stays exactly as you wrote it.

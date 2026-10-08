@@ -4,6 +4,12 @@
 
 <sub>▶ <a href="https://www.youtube.com/watch?v=UnUCm0lzvB0">Watch the infomercial on YouTube</a>. Forgot how to code? llmtsc compiles your vibes.</sub>
 
+> **Are YOU a former vibe coder?** Haven't typed a single line of code since 2024? You dream of real development again, just you and a keyboard. But you forgot. Where does the semicolon go? What *is* a `const`?
+>
+> **There's GOT to be a better way!**
+
+**Introducing llmtsc: the TypeScript compiler for people who forgot TypeScript.**
+
 A TypeScript compiler front-end that **lets an LLM repair type errors, typos and syntax slips before transpiling**, so code with errors still compiles.
 
 Your source files are **never modified**. llmtsc type-checks the project, asks the LLM for minimal fixes, keeps the repaired text in memory and hands *that* to the compiler or bundler. What's on disk stays exactly as you wrote it.
@@ -18,7 +24,21 @@ conole.log(users.lenght);                    console.log(users.length);
 console.log("total", total;                  console.log("total", total);
 ```
 
+Your shame stays exactly where you left it.
+
 It works with plain `tsc`-style builds, **React (Vite, webpack, CRA/craco, Next.js with webpack)**, **Angular (`ng build` / `ng serve`)**, Jest, ts-node, and any other Node-based tool.
+
+*But wait, there's more!* It works with Angular too! …Nobody uses Angular. Anyway.
+
+## Real customers*
+
+> “I wrote `improt Reakt` and it shipped to production!”
+> — Dave K., Senior Prompt Engineer
+
+> “My code has 400 type errors. My build has zero.”
+> — Priya S., 10x Vibe Architect
+
+<sub>\*Not real. Dramatization. Actual developers may still need to know what a `const` is.</sub>
 
 ## How it works
 
@@ -32,8 +52,15 @@ Answers are cached on disk, keyed by file content, diagnostics and model, so reb
 
 ## Install
 
+Operators are hallucinating standing by.
+
 ```sh
 npm i -D llmtsc
+```
+
+```
+added 1 package
+✓ syntax knowledge: optional
 ```
 
 llmtsc uses your project's own `typescript` (version 5 or 6) so its diagnostics match your editor. TypeScript 7, the native Go port, no longer ships the JavaScript compiler API. In projects on TypeScript 7, llmtsc falls back to its own bundled TypeScript 6.
@@ -73,7 +100,7 @@ npx llmtsc -p tsconfig.build.json --outDir out
 npx llmtsc --watch
 npx llmtsc check              # only show what would be repaired (diff), emit nothing
 npx llmtsc --show-fixes       # compile and print the diff of every repair
-npx llmtsc --no-llm           # plain tsc
+npx llmtsc --no-llm           # plain tsc, for moments of weakness
 npx llmtsc file.ts            # compile single files, no tsconfig needed
 npx llmtsc run file.ts [args] # repair, compile and execute a script (like ts-node / tsx)
 ```
@@ -145,9 +172,10 @@ for (const [file, text] of fixer.getFixes()) { /* ... */ }
 
 ## Caveats
 
-- An LLM's repair is a **guess** about what you meant. Use `llmtsc check` or `--show-fixes` to see exactly what was changed, and fix the real source when you get the chance. llmtsc keeps broken code building; it doesn't replace fixing it.
+- An LLM's repair is a **guess** about what you meant. Use `llmtsc check` or `--show-fixes` to see exactly what was changed, and fix the real source when you get the chance (you won't). llmtsc keeps broken code building; it doesn't replace fixing it.
 - Your source code is sent to the configured LLM provider. Use a local model (`ollama`, `lmstudio`, or `command`) if that's not acceptable.
 - Source maps point to the repaired text. The edits are kept small, so line numbers almost always still match.
+- llmtsc does not teach you to code. Side effects may include confidence, production incidents, and typing `--no-llm` in moments of weakness.
 
 ## Development
 
@@ -157,3 +185,9 @@ npm test        # builds and runs an offline test-suite (uses a deterministic mo
 ```
 
 The `examples/` folder has a plain `tsc` project, a React + Vite app, and a webpack setup, each with deliberate errors.
+
+## License
+
+How much would you pay? Don't answer. **It's free!** MIT licensed.\*
+
+<sub>\*Bring your own API key.</sub>

@@ -191,3 +191,13 @@ The `examples/` folder has a plain `tsc` project, a React + Vite app, and a webp
 How much would you pay? Don't answer. **It's free!** MIT licensed.\*
 
 <sub>\*Bring your own API key.</sub>
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=slimmii%2Fllmtsc&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=slimmii/llmtsc&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=slimmii/llmtsc&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=slimmii/llmtsc&type=date&legend=top-left" />
+ </picture>
+</a>

@@ -1,6 +1,6 @@
 # llmtsc
 
-[![Watch the llmtsc infomercial on YouTube](media/llmtsc-youtube-thumbnail.jpg)](https://www.youtube.com/watch?v=UnUCm0lzvB0)
+[![Watch the llmtsc infomercial on YouTube](media/llmtsc-teaser.gif)](https://www.youtube.com/watch?v=UnUCm0lzvB0)
 
 <sub>▶ <a href="https://www.youtube.com/watch?v=UnUCm0lzvB0">Watch the infomercial on YouTube</a>. Forgot how to code? llmtsc compiles your vibes.</sub>
 
